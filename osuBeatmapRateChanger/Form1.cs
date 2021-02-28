@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace osuBeatmapRateChanger
 {
@@ -34,6 +35,7 @@ namespace osuBeatmapRateChanger
 
         float rate;
 
+        NumberFormatInfo nfi = new NumberFormatInfo();
         public Form1()
         {
             InitializeComponent();
@@ -81,6 +83,7 @@ namespace osuBeatmapRateChanger
             progressBar1.Value = 0;
             percentTXT.Text = "0%";
             rate = (float)ratebox.Value;
+            nfi.NumberDecimalSeparator = ".";
             try
             {
 
@@ -93,10 +96,10 @@ namespace osuBeatmapRateChanger
                 string strFFMPEGCmd = ""; 
                     if (pitchCheckBox.Checked)
                 {
-                    strFFMPEGCmd = " -i \"" + dirname + bm.AudioFileName + "\" -filter:a \"atempo=" + rate + "\" -y -b:a 192k \"" + dirname + bm.AudioFileName.Replace(".mp3", "") + " x" + rate + ".mp3\"";
+                    strFFMPEGCmd = " -i \"" + dirname + bm.AudioFileName + "\" -filter:a \"atempo=" + rate.ToString(nfi) + "\" -y -b:a 192k \"" + dirname + bm.AudioFileName.Replace(".mp3", "") + " x" + rate + ".mp3\"";
                 }
                 else{
-                    strFFMPEGCmd = " -i \"" + dirname + bm.AudioFileName + "\" -filter:a \"asetrate=" + (44100*rate) + "\" -y \"" + dirname + bm.AudioFileName.Replace(".mp3", "") + " x" + rate + ".mp3\"";
+                    strFFMPEGCmd = " -i \"" + dirname + bm.AudioFileName + "\" -filter:a \"asetrate=" + (44100*rate).ToString(nfi) + "\" -y \"" + dirname + bm.AudioFileName.Replace(".mp3", "") + " x" + rate + ".mp3\"";
                 }
                 Console.WriteLine(strFFMPEGCmd);
 
@@ -230,8 +233,8 @@ namespace osuBeatmapRateChanger
                 str += "BeatmapID:0\n";
                 str += "BeatmapSetID:-1\n\n";
                 str += "[Difficulty]\n";
-                str += "HPDrainRate:" + bm.HP + "\n";
-                str += "CircleSize:" + bm.CS + "\n";
+                str += "HPDrainRate:" + bm.HP.ToString(nfi) + "\n";
+                str += "CircleSize:" + bm.CS.ToString(nfi) + "\n";
                 if (adjustmapstats)
                 {
                     bm.ODms /= rate;
@@ -243,17 +246,17 @@ namespace osuBeatmapRateChanger
                         ? (AR0Ms - bm.ARms) / ARMsStep1
                         : 5.0 + (AR5Ms - bm.ARms) / ARMsStep2
                     );
-                    str += "OverallDifficulty:" + bm.OD + "\n";
-                    str += "ApproachRate:" + bm.AR + "\n";
+                    str += "OverallDifficulty:" + bm.OD.ToString(nfi) + "\n";
+                    str += "ApproachRate:" + bm.AR.ToString(nfi) + "\n";
                 }
                 else
                 {
-                    str += "OverallDifficulty:" + bm.OD + "\n";
-                    str += "ApproachRate:" + bm.AR + "\n";
+                    str += "OverallDifficulty:" + bm.OD.ToString(nfi) + "\n";
+                    str += "ApproachRate:" + bm.AR.ToString(nfi) + "\n";
                 }
                 
-                str += "SliderMultiplier:" + bm.SV + "\n";
-                str += "SliderTickRate:" + bm.ST + "\n\n";
+                str += "SliderMultiplier:" + bm.SV.ToString(nfi) + "\n";
+                str += "SliderTickRate:" + bm.ST.ToString(nfi) + "\n\n";
                 str += "[Events]\n";
                 str += bm.Events_bg + "\n";
                 for(int i=0; i<bm.Events_break.Count; i++)
@@ -274,11 +277,11 @@ namespace osuBeatmapRateChanger
                         }
                         if (j == 1 && bm.TimingPoints[i][1] > 0)
                         {
-                            str += bm.TimingPoints[i][1] / rate + ",";
+                            str += Convert.ToDecimal(bm.TimingPoints[i][1] / rate).ToString(nfi) + ",";
                             continue;
                         }
                         if (j != 7) {
-                            str += bm.TimingPoints[i][j] + ",";
+                            str += Convert.ToDecimal(bm.TimingPoints[i][j]).ToString(nfi) + ",";
                         }
                         else
                         {

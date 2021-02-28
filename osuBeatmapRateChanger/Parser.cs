@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace osuBeatmapRateChanger
 {
@@ -160,7 +161,7 @@ namespace osuBeatmapRateChanger
 
                     case "Difficulty":
                         String key_diff = line.Split(':')[0];
-                        float val_diff = float.Parse(line.Split(':')[1]);
+                        float val_diff = float.Parse(line.Split(':')[1], CultureInfo.InvariantCulture.NumberFormat);
                         switch (key_diff)
                         {
                             case "CircleSize":
@@ -207,7 +208,7 @@ namespace osuBeatmapRateChanger
                         double[] tp = new double[line.Split(',').Length];
                         for (int i = 0; i < line.Split(',').Length; i++)
                         {
-                            tp[i] = double.Parse(line.Split(',')[i]);
+                            tp[i] = double.Parse(line.Split(',')[i], CultureInfo.InvariantCulture.NumberFormat);
                             if (i == 2)
                             {
                                 tp[i] = double.Parse(line.Split(',')[i]) / speedMtpr;
